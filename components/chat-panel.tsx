@@ -1,14 +1,13 @@
 import * as React from 'react'
 
 import { shareChat } from '@/app/actions'
-import { Button } from '@/components/ui/button'
-import { PromptForm } from '@/components/prompt-form'
 import { ButtonScrollToBottom } from '@/components/button-scroll-to-bottom'
-import { IconShare } from '@/components/ui/icons'
-import { FooterText } from '@/components/footer'
 import { ChatShareDialog } from '@/components/chat-share-dialog'
-import { useAIState, useActions, useUIState } from 'ai/rsc'
+import { PromptForm } from '@/components/prompt-form'
+import { Button } from '@/components/ui/button'
+import { IconShare } from '@/components/ui/icons'
 import type { AI } from '@/lib/chat/actions'
+import { useAIState, useActions, useUIState } from 'ai/rsc'
 import { nanoid } from 'nanoid'
 import { UserMessage } from './stocks/message'
 
@@ -36,24 +35,24 @@ export function ChatPanel({
 
   const exampleMessages = [
     {
-      heading: 'What are the',
-      subheading: 'trending memecoins today?',
-      message: `What are the trending memecoins today?`
+      heading: 'Whats your name?',
+      subheading: 'Can you describe yourself?',
+      message: `Please introduce yourself?`
     },
     {
-      heading: 'What is the price of',
-      subheading: '$DOGE right now?',
-      message: 'What is the price of $DOGE right now?'
+      heading: 'Can you roleplay as anime character?',
+      subheading: 'Anime?',
+      message: 'Can you roleplay as anime character?'
     },
     {
-      heading: 'I would like to buy',
-      subheading: '42 $DOGE',
-      message: `I would like to buy 42 $DOGE`
+      heading: 'What movies do you like?',
+      subheading: 'Movie recommendations?',
+      message: `What movies do you like?`
     },
     {
-      heading: 'What are some',
-      subheading: `recent events about $DOGE?`,
-      message: `What are some recent events about $DOGE?`
+      heading: 'What are some good habits?',
+      subheading: `for better relationships`,
+      message: `What are some good habits for a better relationship?`
     }
   ]
 
@@ -131,7 +130,7 @@ export function ChatPanel({
 
         <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
           <PromptForm input={input} setInput={setInput} />
-          <FooterText className="hidden sm:block" />
+          {/* <FooterText className="hidden sm:block" /> */}
         </div>
       </div>
     </div>

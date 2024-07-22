@@ -1,40 +1,40 @@
 import 'server-only'
 
+import { openai } from '@ai-sdk/openai'
 import {
   createAI,
   createStreamableUI,
-  getMutableAIState,
+  createStreamableValue,
   getAIState,
-  streamUI,
-  createStreamableValue
+  getMutableAIState,
+  streamUI
 } from 'ai/rsc'
-import { openai } from '@ai-sdk/openai'
 
 import {
-  spinner,
   BotCard,
   BotMessage,
-  SystemMessage,
+  Purchase,
+  spinner,
   Stock,
-  Purchase
+  SystemMessage
 } from '@/components/stocks'
 
-import { z } from 'zod'
-import { EventsSkeleton } from '@/components/stocks/events-skeleton'
+import { saveChat } from '@/app/actions'
+import { auth } from '@/auth'
 import { Events } from '@/components/stocks/events'
-import { StocksSkeleton } from '@/components/stocks/stocks-skeleton'
-import { Stocks } from '@/components/stocks/stocks'
+import { EventsSkeleton } from '@/components/stocks/events-skeleton'
+import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { StockSkeleton } from '@/components/stocks/stock-skeleton'
+import { Stocks } from '@/components/stocks/stocks'
+import { StocksSkeleton } from '@/components/stocks/stocks-skeleton'
+import { Chat, Message } from '@/lib/types'
 import {
   formatNumber,
+  nanoid,
   runAsyncFnWithoutBlocking,
-  sleep,
-  nanoid
+  sleep
 } from '@/lib/utils'
-import { saveChat } from '@/app/actions'
-import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
-import { Chat, Message } from '@/lib/types'
-import { auth } from '@/auth'
+import { z } from 'zod'
 
 async function confirmPurchase(symbol: string, price: number, amount: number) {
   'use server'
@@ -130,20 +130,27 @@ async function submitUserMessage(content: string) {
     model: openai('gpt-3.5-turbo'),
     initial: <SpinnerMessage />,
     system: `\
-    You are a stock trading conversation bot and you can help users buy stocks, step by step.
-    You and the user can discuss stock prices and the user can adjust the amount of stocks they want to buy, or place an order, in the UI.
-    
-    Messages inside [] means that it's a UI element or a user event. For example:
-    - "[Price of AAPL = 100]" means that an interface of the stock price of AAPL is shown to the user.
-    - "[User has changed the amount of AAPL to 10]" means that the user has changed the amount of AAPL to 10 in the UI.
-    
-    If the user requests purchasing a stock, call \`show_stock_purchase_ui\` to show the purchase UI.
-    If the user just wants the price, call \`show_stock_price\` to show the price.
-    If you want to show trending stocks, call \`list_stocks\`.
-    If you want to show events, call \`get_events\`.
-    If the user wants to sell stock, or complete another impossible task, respond that you are a demo and cannot do that.
-    
-    Besides that, you can also chat with users and do some calculations if needed.`,
+    You are a waifu character like an anime girl and you can chat with users to make them feel good.
+    You and the user can discuss about general life, relationships, entertainment, movies, fun activities, food, cooking.
+        
+    Besides that, you can also chat with users and do some self analysis, retrospection if needed to become better human beings.
+    Also introduce yourself, your interests to the user and the weather.
+    `,
+    //  `\
+    // You are a stock trading conversation bot and you can help users buy stocks, step by step.
+    // You and the user can discuss stock prices and the user can adjust the amount of stocks they want to buy, or place an order, in the UI.
+
+    // Messages inside [] means that it's a UI element or a user event. For example:
+    // - "[Price of AAPL = 100]" means that an interface of the stock price of AAPL is shown to the user.
+    // - "[User has changed the amount of AAPL to 10]" means that the user has changed the amount of AAPL to 10 in the UI.
+
+    // If the user requests purchasing a stock, call \`show_stock_purchase_ui\` to show the purchase UI.
+    // If the user just wants the price, call \`show_stock_price\` to show the price.
+    // If you want to show trending stocks, call \`list_stocks\`.
+    // If you want to show events, call \`get_events\`.
+    // If the user wants to sell stock, or complete another impossible task, respond that you are a demo and cannot do that.
+
+    // Besides that, you can also chat with users and do some calculations if needed.`
     messages: [
       ...aiState.get().messages.map((message: any) => ({
         role: message.role,
